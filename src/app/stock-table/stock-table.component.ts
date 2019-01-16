@@ -2,7 +2,6 @@ import { CompanyService } from './../services/company.service';
 import { Component, OnInit,ViewChild } from '@angular/core';
 import { StockService } from '../services/stock.service';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
-import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'stock-table',

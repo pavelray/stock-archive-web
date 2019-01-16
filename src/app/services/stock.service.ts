@@ -16,5 +16,8 @@ export class StockService {
     return  this.http.get(this.url+companyName);
   }
 
+  getBestPerformingStock(year){
+    return this.http.get(this.url+"GetBestPerformingCompany/"+year);
+  }
   
 }
