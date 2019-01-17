@@ -12,6 +12,10 @@ export class StockService {
   constructor(private http: Http) {
   }
 
+  getYearsRange(){
+    return  this.http.get(this.url+"GetYearsRange");
+  }
+
   getStocks(companyName){
     return  this.http.get(this.url+companyName);
   }

@@ -9,6 +9,9 @@ import {MatPaginator, MatTableDataSource} from '@angular/material';
 })
 export class BestPerformingStockTableComponent implements OnInit {
   stockList : any [];
+  yearList : number[];
+  selectedYear : number;
+
   displayedColumns: string[] = ['Symbol', 'Return %'];
   
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -18,8 +21,13 @@ export class BestPerformingStockTableComponent implements OnInit {
   }
 
   ngOnInit() {
-          this.service.getBestPerformingStock("2016").subscribe(respose=>{
-        this.stockList = respose.json();
+      this.service.getYearsRange().subscribe(response=> {
+        this.yearList = response.json();
+        this.selectedYear = this.yearList.sort().pop();
+         
+          this.service.getBestPerformingStock(this.selectedYear).subscribe(respose=>{
+            this.stockList = respose.json();
+          });
       });
   }
      

@@ -3,8 +3,8 @@
   <div class="form-row">
     <div class="form-group col-md-3">
       <label for="symbol">Select Symbol</label>
-      <select class="form-control" id="symbol">
-        <option *ngFor="let company of companyList">
+      <select class="form-control" id="symbol" [(ngModel)]='selectedSymbol'>
+        <option *ngFor="let company of companyList" >
           {{company.Symbol}}
         </option>
       </select>

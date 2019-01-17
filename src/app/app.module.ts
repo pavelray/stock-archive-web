@@ -31,6 +31,14 @@ const appRoutes: Routes = [
   {
       path: '',
       component: HomeComponent
+  },
+  {
+    path: 'home',
+    component: HomeComponent
+  },
+  {
+    path: 'search/:symbol/:year',
+    component: SearchComponent
   },  
   {
       path: 'search',

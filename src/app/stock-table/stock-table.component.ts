@@ -2,6 +2,7 @@ import { CompanyService } from './../services/company.service';
 import { Component, OnInit,ViewChild } from '@angular/core';
 import { StockService } from '../services/stock.service';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'stock-table',
@@ -9,6 +10,9 @@ import {MatPaginator, MatTableDataSource} from '@angular/material';
   styleUrls: ['./stock-table.component.css']
 })
 export class StockTableComponent implements OnInit {  
+  
+  selectedSymbol : string;
+  selectedyear:string;
   stockList : any [];
   displayedColumns: string[] = ['Date', 'Symbol', 'High', 'Low', 'Open','Close', 'Volume'];
   name :any;
@@ -17,26 +21,38 @@ export class StockTableComponent implements OnInit {
   companyName$ = this.companyService.data$;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private service : StockService, private companyService : CompanyService) { 
+  constructor(private service : StockService, private companyService : CompanyService, private route: ActivatedRoute) { 
     
   }
 
   ngOnInit() {
     
+    this.route.paramMap.subscribe(param => {
+      this.selectedSymbol = param.get("symbol");
+      this.selectedyear = param.get("year");
+      this.getStocksBySymbol(this.selectedSymbol);
+    });
+  
     this.companyName$.subscribe(data=> 
-      {
-          if(data != undefined)
-          {
-            this.service.getStocks(data).subscribe(respose=>{
-              this.stockList = respose.json();
-              this.dataSource=new MatTableDataSource<any>(this.stockList);
-              this.dataSource.paginator = this.paginator;
-            });
-          }
-      });
+    {
+        if(data != undefined)
+        {
+          this.selectedSymbol = data;
+          this.getStocksBySymbol(this.selectedSymbol);
+        }         
+    });
     
     
     
+  }
+
+  getStocksBySymbol(symbol)
+  {
+    this.service.getStocks(symbol).subscribe(respose=>{
+      this.stockList = respose.json();
+      this.dataSource=new MatTableDataSource<any>(this.stockList);
+      this.dataSource.paginator = this.paginator;
+    });
   }
 
 }

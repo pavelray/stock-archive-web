@@ -1,4 +1,4 @@
-import { Component, OnInit,Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'bg-navbar',
@@ -6,7 +6,12 @@ import { Component, OnInit,Input } from '@angular/core';
   styleUrls: ['./bg-navbar.component.css']
 })
 export class BgNavbarComponent implements OnInit {
-  @Input() selectedCompany: string;
+
+  navbarOpen = false;
+
+  toggleNavbar() {
+    this.navbarOpen = !this.navbarOpen;
+  }
   constructor() { }
 
   ngOnInit() {
