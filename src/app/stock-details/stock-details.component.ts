@@ -1,7 +1,7 @@
-import { Company } from './../interfaces/Company';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CompanyService } from '../services/company.service';
 import { ActivatedRoute } from '@angular/router';
+import { StockTableComponent } from '../stock-table/stock-table.component'; 
 
 @Component({
   selector: 'stock-details',
@@ -9,22 +9,28 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./stock-details.component.css']
 })
 export class StockDetailsComponent implements OnInit {
-  companyList : Company[];
   selectedSymbol : string;
   selectedyear : string;
-  constructor(private service : CompanyService, private route: ActivatedRoute) { }
+  fromDate: string;
+  toDate:string;
 
-  ngOnInit() {
-    
-    this.service.getCompanies().subscribe(respose=>{
-      this.companyList = respose.json();
+  @ViewChild(StockTableComponent) stockTable: StockTableComponent;
 
+  constructor( private route: ActivatedRoute,private companyService : CompanyService,) { }
+
+  ngOnInit() {    
       this.route.paramMap.subscribe(param => {
          this.selectedSymbol = param.get("symbol");
          this.selectedyear = param.get("year");
-      })
-      
-    });
+      });      
+  }
+
+  getStocksByRange()
+  {
+     console.log(this.fromDate);
+     console.log(this.toDate);
+    this.stockTable.getStocksByRange(this.selectedSymbol,this.fromDate,this.toDate);
+
   }
   
 }

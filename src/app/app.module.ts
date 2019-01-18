@@ -37,6 +37,10 @@ const appRoutes: Routes = [
     component: HomeComponent
   },
   {
+    path: 'search/:symbol',
+    component: SearchComponent
+  },
+  {
     path: 'search/:symbol/:year',
     component: SearchComponent
   },  
@@ -44,7 +48,7 @@ const appRoutes: Routes = [
       path: 'search',
       component: SearchComponent
   }
-  ];
+];
 
 @NgModule({
   declarations: [

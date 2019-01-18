@@ -1,30 +1,39 @@
 <div class="row">
 <div class="col-md-12">
   <div class="form-row">
-    <div class="form-group col-md-3">
-      <label for="symbol">Select Symbol</label>
-      <select class="form-control" id="symbol" [(ngModel)]='selectedSymbol'>
-        <option *ngFor="let company of companyList" >
-          {{company.Symbol}}
-        </option>
-      </select>
-    </div>
+      <div class="form-group col-md-6">
+          <h5 for="symbol">{{selectedSymbol}}</h5>
+        </div>
+  </div>
+  <div class="form-row">
     <div class="form-group col-md-3">
       <label for="fromDate">Form Date</label>
-      <input type="date" class="form-control" id="fromDate">
+      <input type="date" class="form-control" id="fromDate" [(ngModel)]="fromDate">
     </div>
     <div class="form-group col-md-3">
       <label for="toDate">To Date</label>
-      <input type="date" class="form-control" id="toDate">
+      <input type="date" class="form-control" id="toDate" [(ngModel)]="toDate">
     </div>
-    <div class="col-md-3">
-      <button type="submit" class="btn btn-primary">Search</button>
+    <div class="col-md-2" style="text-align: center; margin-top: 30px;">
+      <button type="submit" class="btn btn-primary" (click)="getStocksByRange()">Search</button>
     </div>
+    <div class="col-md-3" style="text-align: center; margin-top: 30px;">
+        <div class="btn-group" role="toolbar" aria-label="btn-group">
+            <button type="button" class="btn btn-info">1m</button>
+            <button type="button" class="btn btn-info">3m</button>
+            <button type="button" class="btn btn-info">6m</button>
+            <button type="button" class="btn btn-info">1Yr</button>
+            <button type="button" class="btn btn-info">3Yr</button>
+            <button type="button" class="btn btn-info">5Yr</button>
+            <button type="button" class="btn btn-info">Max</button>
+        </div>
+    </div>
+    
     
   </div>
 </div>
 <div class="col-md-12">
-    <stock-table></stock-table>
+    <stock-table [fromDate]="fromDate" [toDate]="toDate"></stock-table>
 </div>
 <div class="col-md-12">
 
