@@ -1,8 +1,10 @@
+import { Stock } from './../interfaces/Stock';
 import { CompanyService } from './../services/company.service';
 import { Component, OnInit,ViewChild, Input } from '@angular/core';
 import { StockService } from '../services/stock.service';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
+import { DatePipe } from '@angular/common'
 
 @Component({
   selector: 'stock-table',
@@ -16,15 +18,21 @@ export class StockTableComponent implements OnInit {
   stockList : any [];
   displayedColumns: string[] = ['Date', 'Symbol', 'High', 'Low', 'Open','Close', 'Volume'];
   name :any;
+  chart :any;
+  chartData : any;
 
   @Input() fromDate:string;
   @Input() toDate:string;
 
   dataSource : MatTableDataSource<any[]>;
 
+  type = 'candlestick';
+  dataFormat = 'json';
+  chartDataSource = this.chart;
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private service : StockService, private companyService : CompanyService, private route: ActivatedRoute) { 
+  constructor(private service : StockService, private companyService : CompanyService, private route: ActivatedRoute, public datepipe: DatePipe) { 
     
   }
 
@@ -50,6 +58,7 @@ export class StockTableComponent implements OnInit {
       this.stockList = respose.json();
       this.dataSource=new MatTableDataSource<any>(this.stockList);
       this.dataSource.paginator = this.paginator;
+      this.populateChartData();
     });
   }
 
@@ -59,6 +68,7 @@ export class StockTableComponent implements OnInit {
       this.stockList = respose.json();
       this.dataSource=new MatTableDataSource<any>(this.stockList);
       this.dataSource.paginator = this.paginator;
+      this.populateChartData();
     });
   }
 
@@ -71,7 +81,53 @@ export class StockTableComponent implements OnInit {
         this.dataSource=new MatTableDataSource<any>(this.stockList);
         this.dataSource.paginator = this.paginator;
         this.paginator._changePageSize(this.paginator.pageSize); 
+        this.populateChartData();
       });
+  }
+
+  populateChartData()
+  { 
+    this.chartData = new Array();
+    this.stockList.forEach(i=>{ 
+        
+      this.chartData.push(
+        {
+        "tooltext": "<b>{{$DateDataValue}}<br>Open: <b>$OpenDataValue</b><br>Close: <b>$CloseDataValue</b><br>High: <b>$HighDataValue</b><br>Low: <b>$LowDataValue</b><br>Volume: <b>$VolumeDataValue</b>",
+        "Open":i.Open,
+        "Close":i.Close,
+        "High":i.High,
+        "Low":i.Low,
+        "Volume":i.Volume,
+        "Date":this.datepipe.transform(i.Date, 'dd-MM-yyyy'),
+        "x":i.High
+        
+        });
+    });
+    
+    this.chart = {
+        "chart": {
+          "caption": this.selectedSymbol,
+          "numberprefix": "$",
+          "pyaxisname": "Price (USD)",
+          "theme": "fusion",
+          "plotpriceas": "LINE",
+          "plotlinethickness": "2.3",
+          "showvolumechart": "1",
+          "vnumberprefix": "$",
+          "vyaxisname": "Volume traded"
+        },
+        
+        "dataset": [
+          {
+            "data": this.chartData
+          }
+        ]
+      }
+
+      
+      
+      this.chartDataSource = this.chart;
+      console.log(this.chartData);
   }
 
 }

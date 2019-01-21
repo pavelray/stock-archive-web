@@ -12,6 +12,16 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {CompanyAutofillComponent } from './company-autofill/company-autofill.component';
 import {MatTableModule,MatProgressSpinnerModule,MatPaginatorModule,MatToolbarModule} from '@angular/material'
 import {HttpClientModule} from '@angular/common/http';
+import { DatePipe } from '@angular/common'
+
+// Import angular-fusioncharts
+import { FusionChartsModule } from 'angular-fusioncharts';
+
+// Import FusionCharts library and chart modules
+import * as FusionCharts from 'fusioncharts';
+import * as Charts from 'fusioncharts/fusioncharts.charts';
+import * as powercharts from 'fusioncharts/fusioncharts.powercharts';
+import * as FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion';
 
 import { AppComponent } from './app.component';
 import { StocksComponent } from './stocks/stocks.component';
@@ -25,7 +35,13 @@ import { BestPerformingStockTableComponent } from './best-performing-stock-table
 import { StockDetailsComponent } from './stock-details/stock-details.component';
 import { SearchComponent } from './search/search.component';
 import { HomeComponent } from './home/home.component';
+import { StockChartComponent } from './stock-chart/stock-chart.component';
 
+
+
+
+// Pass the fusioncharts library and chart modules
+FusionChartsModule.fcRoot(FusionCharts, Charts, FusionTheme,powercharts);
 
 const appRoutes: Routes = [
   {
@@ -62,7 +78,8 @@ const appRoutes: Routes = [
     BestPerformingStockTableComponent,
     StockDetailsComponent,
     HomeComponent,
-    SearchComponent
+    SearchComponent,
+    StockChartComponent
 
   ],
   imports: [
@@ -82,9 +99,10 @@ const appRoutes: Routes = [
     ,HttpClientModule
     ,MatToolbarModule
     ,RouterModule.forRoot(appRoutes)
+    ,FusionChartsModule
   ],
   
-  providers: [CompanyService],
+  providers: [CompanyService,DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
