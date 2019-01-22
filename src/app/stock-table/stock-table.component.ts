@@ -11,7 +11,8 @@ import { DatePipe } from '@angular/common'
   templateUrl: './stock-table.component.html',
   styleUrls: ['./stock-table.component.css']
 })
-export class StockTableComponent implements OnInit {  
+export class StockTableComponent implements OnInit {
+    
   
   selectedSymbol : string;
   selectedyear:string;
@@ -19,17 +20,22 @@ export class StockTableComponent implements OnInit {
   displayedColumns: string[] = ['Date', 'Symbol', 'High', 'Low', 'Open','Close', 'Volume'];
   name :any;
   chart :any;
-  chartData : any;
+  chartLabel:any;
+  volumeData:any;
+  openingPriceData:any;
+  closePriceData: any;
+  chartSubcaption:string;
 
   @Input() fromDate:string;
   @Input() toDate:string;
 
   dataSource : MatTableDataSource<any[]>;
 
-  type = 'candlestick';
+  type = 'scrollcombidy2d';
   dataFormat = 'json';
   chartDataSource = this.chart;
-
+  width = 1000;
+  height = 600;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private service : StockService, private companyService : CompanyService, private route: ActivatedRoute, public datepipe: DatePipe) { 
@@ -58,6 +64,7 @@ export class StockTableComponent implements OnInit {
       this.stockList = respose.json();
       this.dataSource=new MatTableDataSource<any>(this.stockList);
       this.dataSource.paginator = this.paginator;
+      this.chartSubcaption = "Of "+selectedyear; 
       this.populateChartData();
     });
   }
@@ -72,62 +79,100 @@ export class StockTableComponent implements OnInit {
     });
   }
 
+  populateStockTableData(stockData: any) {
+    this.stockList = stockData;
+    this.dataSource=new MatTableDataSource<any>(this.stockList);
+    this.dataSource.paginator = this.paginator;
+    this.paginator._changePageSize(this.paginator.pageSize);
+    //this.populateChartData();
+  }
+
   getStocksByRange(selectedSymbol:string, fromDate:string, toDate:string)
   {
 
     this.service.getStocksByDateRange(selectedSymbol,fromDate,toDate).subscribe(respose=>{
         this.stockList = respose.json();
-        console.log(this.stockList);
+       
         this.dataSource=new MatTableDataSource<any>(this.stockList);
         this.dataSource.paginator = this.paginator;
-        this.paginator._changePageSize(this.paginator.pageSize); 
+        this.paginator._changePageSize(this.paginator.pageSize);
+        this.chartSubcaption = "From "+fromDate+" To "+toDate; 
         this.populateChartData();
       });
   }
 
   populateChartData()
   { 
-    this.chartData = new Array();
+    this.chartLabel = new Array();
+    this.volumeData = new Array();
+    this.openingPriceData = new Array();
+    this.closePriceData = new Array();
+
     this.stockList.forEach(i=>{ 
-        
-      this.chartData.push(
-        {
-        "tooltext": "<b>{{$DateDataValue}}<br>Open: <b>$OpenDataValue</b><br>Close: <b>$CloseDataValue</b><br>High: <b>$HighDataValue</b><br>Low: <b>$LowDataValue</b><br>Volume: <b>$VolumeDataValue</b>",
-        "Open":i.Open,
-        "Close":i.Close,
-        "High":i.High,
-        "Low":i.Low,
-        "Volume":i.Volume,
-        "Date":this.datepipe.transform(i.Date, 'dd-MM-yyyy'),
-        "x":i.High
-        
-        });
+      
+      this.volumeData.push({
+        "value":i.Volume
+      });
+
+      this.closePriceData.push({
+        "value":i.Close
+      });
+
+      this.openingPriceData.push({
+        "value":i.Open
+      });
+
+      this.chartLabel.push({
+        "label":this.datepipe.transform(i.Date, 'dd-MM-yyyy')
+      });
+
     });
     
     this.chart = {
         "chart": {
           "caption": this.selectedSymbol,
-          "numberprefix": "$",
-          "pyaxisname": "Price (USD)",
-          "theme": "fusion",
-          "plotpriceas": "LINE",
-          "plotlinethickness": "2.3",
-          "showvolumechart": "1",
-          "vnumberprefix": "$",
-          "vyaxisname": "Volume traded"
+          "subcaption": this.chartSubcaption,
+          "yaxisname": "Volume Sold",
+          "syaxisname": "Stock Price",
+          "labeldisplay": "rotate",
+          "snumberprefix": "$",
+          "scrollheight": "10",
+          "numvisibleplot": "30",
+          "drawcrossline": "1",
+          "theme": "fusion"
         },
-        
+        "categories": [
+          {
+            "category": this.chartLabel
+          }
+        ],
         "dataset": [
           {
-            "data": this.chartData
+            "seriesname": "Total Volume",
+            "plottooltext": "Volume: $dataValue",
+            "data": this.volumeData
+          },
+          {
+            "seriesname": "Closing Price",
+            "parentyaxis": "S",
+            "renderas": "line",
+            "plottooltext": "Close $dataValue",
+            "showvalues": "0",
+             "data": this.closePriceData
+          },
+          {
+            "seriesname": "Opening Price",
+            "parentyaxis": "S",
+            "renderas": "line",
+            "plottooltext": "Open $dataValue",
+            "showvalues": "0",
+             "data": this.openingPriceData
           }
         ]
-      }
-
-      
-      
+      };
+      this.chart.bgColor = "#efefef";
       this.chartDataSource = this.chart;
-      console.log(this.chartData);
+      
   }
 
 }
