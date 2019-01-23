@@ -24,18 +24,15 @@ import * as powercharts from 'fusioncharts/fusioncharts.powercharts';
 import * as FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion';
 
 import { AppComponent } from './app.component';
-import { StocksComponent } from './stocks/stocks.component';
 import { BgNavbarComponent } from './bg-navbar/bg-navbar.component';
+import { BestPerformingStockTableComponent } from './best-performing-stock-table/best-performing-stock-table.component';
+import { StockDetailsComponent } from './stock-details/stock-details.component';
+import { HomeComponent } from './home/home.component';
+import { StockChartComponent } from './stock-chart/stock-chart.component';
+import { StockTableComponent } from './stock-table/stock-table.component';
 
 
 import { CompanyService } from './services/company.service';
-import { StockTableComponent } from './stock-table/stock-table.component';
-import { BodyComponent } from './body/body.component';
-import { BestPerformingStockTableComponent } from './best-performing-stock-table/best-performing-stock-table.component';
-import { StockDetailsComponent } from './stock-details/stock-details.component';
-import { SearchComponent } from './search/search.component';
-import { HomeComponent } from './home/home.component';
-import { StockChartComponent } from './stock-chart/stock-chart.component';
 
 
 
@@ -53,32 +50,28 @@ const appRoutes: Routes = [
     component: HomeComponent
   },
   {
-    path: 'search/:symbol',
-    component: SearchComponent
+    path: 'stock/:symbol',
+    component: StockDetailsComponent
   },
   {
-    path: 'search/:symbol/:year',
-    component: SearchComponent
+    path: 'stock/:symbol/:year',
+    component: StockDetailsComponent
   },  
   {
-      path: 'search',
-      component: SearchComponent
+      path: 'stock',
+      component: StockDetailsComponent
   }
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    CompanyAutofillComponent,
-    StocksComponent,
     BgNavbarComponent,
     CompanyAutofillComponent,
     StockTableComponent,
-    BodyComponent,
     BestPerformingStockTableComponent,
     StockDetailsComponent,
     HomeComponent,
-    SearchComponent,
     StockChartComponent
 
   ],

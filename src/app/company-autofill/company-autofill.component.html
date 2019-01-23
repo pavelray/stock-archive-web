@@ -2,7 +2,7 @@
   <mat-form-field class="example-full-width">
     <input type="text" placeholder="Company" aria-label="Company" matInput [formControl]="myControl" [matAutocomplete]="auto">
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-      <mat-option *ngFor="let company of filteredOptions | async" [value]="company" [routerLink]="['/search',company.Symbol]">
+      <mat-option *ngFor="let company of filteredOptions | async" [value]="company" [routerLink]="['/stock',company.Symbol]">
         {{company.Symbol}}
       </mat-option>
     </mat-autocomplete>

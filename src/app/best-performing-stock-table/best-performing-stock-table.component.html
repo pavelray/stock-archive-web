@@ -1,6 +1,6 @@
 <h3>Best Performing Stocks ({{selectedYear}})</h3>
 <div class="list-group">
-  <div  *ngFor="let stock of stockList" [routerLink]="['/search',stock.Symbol,selectedYear]" 
+  <div  *ngFor="let stock of stockList" [routerLink]="['/stock',stock.Symbol,selectedYear]" 
           class="list-group-item d-flex justify-content-between align-items-center" style="cursor:pointer">
   {{stock.Symbol}}
   <span class="badge badge-primary badge-pill">{{stock.Performance | number}}% </span>

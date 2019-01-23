@@ -1,8 +1,10 @@
+import { Observable, Subject } from 'rxjs';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CompanyService } from '../services/company.service';
 import { ActivatedRoute } from '@angular/router';
 import { StockTableComponent } from '../stock-table/stock-table.component'; 
 import { StockService } from '../services/stock.service';
+import { StockChartComponent } from '../stock-chart/stock-chart.component';
 
 @Component({
   selector: 'stock-details',
@@ -15,8 +17,13 @@ export class StockDetailsComponent implements OnInit {
   fromDate: string;
   toDate:string;
   stockData:any;
+  chartSubcaption:string;
+
+  subject = new Subject<any>();
+
 
   @ViewChild(StockTableComponent) stockTable: StockTableComponent;
+  @ViewChild(StockChartComponent) stockChart: StockChartComponent;
 
   constructor( private route: ActivatedRoute, private companyService : CompanyService, private service : StockService) { }
 
@@ -27,46 +34,56 @@ export class StockDetailsComponent implements OnInit {
          
          if(this.selectedyear == "" || this.selectedyear == null || this.selectedyear == undefined)
          {
-          this.stockData = this.getStocksBySymbol(this.selectedSymbol);
-          console.log(this.stockData);
-          this.populateStockTableData();
+            this.getStocksBySymbol(this.selectedSymbol);
          }
          else
          {
-           this.stockData = this.getStocksByYear(this.selectedSymbol,this.selectedyear);
-           console.log(this.stockData);
-           this.populateStockTableData();
+           this.getStocksByYear(this.selectedSymbol,this.selectedyear);
          }
        }); 
   }
-  getStocksByYear(selectedSymbol: string, selectedyear: string): any {
+
+  getStocksByYear(selectedSymbol: string, selectedyear: string){
+    
     this.service.getStocksByYear(selectedSymbol,selectedyear).subscribe(respose=>{
-      
       this.stockData =  respose.json();
-      return this.stockData;
+      this.populateStockTable();
+      this.populateChart();
     });
+    
   }
-  getStocksBySymbol(selectedSymbol: string): any {
+
+  getStocksBySymbol(selectedSymbol: string){
+    
     this.service.getStocks(selectedSymbol).subscribe(respose=>{
-     
       this.stockData =  respose.json();
-      return this.stockData;
-    });
+      this.populateStockTable();
+      this.populateChart();
+     });
+    
   }
 
   getStocksByRange()
   {
     this.service.getStocksByDateRange(this.selectedSymbol,this.fromDate,this.toDate).subscribe(respose=>{
       this.stockData = respose.json();
+      this.chartSubcaption = "From "+this.fromDate+" To "+this.toDate; 
+      this.populateStockTable();
+      this.populateChart();
     });
-    this.populateStockTableData();
     //this.stockTable.getStocksByRange(this.selectedSymbol,this.fromDate,this.toDate);
   }
 
-  populateStockTableData()
+  populateStockTable()
   {
-    
+    //console.log(this.stockData);
     this.stockTable.populateStockTableData(this.stockData);
+  }
+
+  populateChart()
+  {
+    console.log(this.stockData);
+    this.stockChart.populateChartData(this.stockData, this.selectedSymbol,this.chartSubcaption);
   }
   
 }
