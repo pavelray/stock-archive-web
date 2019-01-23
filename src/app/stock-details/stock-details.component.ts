@@ -1,4 +1,4 @@
-import { Observable, Subject } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CompanyService } from '../services/company.service';
 import { ActivatedRoute } from '@angular/router';
@@ -13,77 +13,68 @@ import { StockChartComponent } from '../stock-chart/stock-chart.component';
 })
 export class StockDetailsComponent implements OnInit {
   selectedSymbol : string;
-  selectedyear : string;
+  selectedyear : number;
   fromDate: string;
   toDate:string;
   stockData:any;
   chartSubcaption:string;
 
-  subject = new Subject<any>();
-
+  yearList: any;
+  selectedYear: any;
 
   @ViewChild(StockTableComponent) stockTable: StockTableComponent;
   @ViewChild(StockChartComponent) stockChart: StockChartComponent;
+  
 
   constructor( private route: ActivatedRoute, private companyService : CompanyService, private service : StockService) { }
 
   ngOnInit() {    
-      this.route.paramMap.subscribe(param => {
-         this.selectedSymbol = param.get("symbol");
-         this.selectedyear = param.get("year");
+    this.route.paramMap.subscribe(param => {
+      this.selectedSymbol = param.get("symbol");
+      this.selectedyear = +param.get("year");
          
-         if(this.selectedyear == "" || this.selectedyear == null || this.selectedyear == undefined)
-         {
-            this.getStocksBySymbol(this.selectedSymbol);
-         }
-         else
-         {
-           this.getStocksByYear(this.selectedSymbol,this.selectedyear);
-         }
-       }); 
+      this.getStocksBySymbol(this.selectedSymbol, this.selectedyear);
+    }); 
   }
 
-  getStocksByYear(selectedSymbol: string, selectedyear: string){
+  getStocksBySymbol(selectedSymbol: string, selectedyear: number){
     
-    this.service.getStocksByYear(selectedSymbol,selectedyear).subscribe(respose=>{
-      this.stockData =  respose.json();
+    this.service.getStocks(selectedSymbol).subscribe(respose=>{
+    this.stockData =  respose.json();
+    
+      if(selectedyear != undefined && selectedyear > 0)
+      {
+        this.stockData =  this.stockData.filter(data=> new Date(data.Date).getFullYear() == selectedyear);
+      }
       this.populateStockTable();
       this.populateChart();
     });
-    
-  }
-
-  getStocksBySymbol(selectedSymbol: string){
-    
-    this.service.getStocks(selectedSymbol).subscribe(respose=>{
-      this.stockData =  respose.json();
-      this.populateStockTable();
-      this.populateChart();
-     });
     
   }
 
   getStocksByRange()
   {
-    this.service.getStocksByDateRange(this.selectedSymbol,this.fromDate,this.toDate).subscribe(respose=>{
-      this.stockData = respose.json();
-      this.chartSubcaption = "From "+this.fromDate+" To "+this.toDate; 
-      this.populateStockTable();
-      this.populateChart();
-    });
-    //this.stockTable.getStocksByRange(this.selectedSymbol,this.fromDate,this.toDate);
+    this.stockData =  this.stockData.filter(data=> new Date(data.Date) >=  new Date(this.fromDate) && new Date(data.Date) <= new Date(this.toDate));
+    this.populateStockTable();
+    this.populateChart();    
   }
 
   populateStockTable()
   {
-    //console.log(this.stockData);
     this.stockTable.populateStockTableData(this.stockData);
   }
 
   populateChart()
   {
-    console.log(this.stockData);
     this.stockChart.populateChartData(this.stockData, this.selectedSymbol,this.chartSubcaption);
   }
   
+  getLastOneMonthData()
+  {
+    
+    this.stockData = this.stockData.filter(data=> new Date(data.Date).getFullYear() == 2016);
+    console.log( this.stockData);
+
+  }
+
 }
