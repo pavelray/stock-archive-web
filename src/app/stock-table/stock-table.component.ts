@@ -15,7 +15,7 @@ export class StockTableComponent implements OnInit {
    
   selectedSymbol : string;
   selectedyear:string;
-  stockList : any [];
+  stockList : Stock [];
   displayedColumns: string[] = ['Date', 'Symbol', 'High', 'Low', 'Open','Close', 'Volume'];
   name :any;
  
@@ -31,12 +31,18 @@ export class StockTableComponent implements OnInit {
    
   }
 
-  populateStockTableData(stockData: any) {
+  populateStockTableData(stockData: Stock[]) {
     this.stockList = stockData;
     this.dataSource=new MatTableDataSource<any>(this.stockList);
     this.dataSource.paginator = this.paginator;
     this.paginator._changePageSize(this.paginator.pageSize);
     
+  }
+
+  calculateYearlyPerformance(stockData: Stock[])
+  {
+      
+
   }
 }
 

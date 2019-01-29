@@ -33,6 +33,7 @@ import { StockTableComponent } from './stock-table/stock-table.component';
 
 
 import { CompanyService } from './services/company.service';
+import { StockYearlyPerformanceTableComponent } from './stock-yearly-performance-table/stock-yearly-performance-table.component';
 
 
 
@@ -72,7 +73,8 @@ const appRoutes: Routes = [
     BestPerformingStockTableComponent,
     StockDetailsComponent,
     HomeComponent,
-    StockChartComponent
+    StockChartComponent,
+    StockYearlyPerformanceTableComponent
 
   ],
   imports: [

@@ -1,3 +1,4 @@
+import { Stock } from './../interfaces/Stock';
 import { map, filter } from 'rxjs/operators';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CompanyService } from '../services/company.service';
@@ -16,7 +17,7 @@ export class StockDetailsComponent implements OnInit {
   selectedyear : number;
   fromDate: string;
   toDate:string;
-  stockData:any;
+  stockData:Stock[];
   chartSubcaption:string;
 
   yearList: any;
@@ -46,8 +47,8 @@ export class StockDetailsComponent implements OnInit {
       {
         this.stockData =  this.stockData.filter(data=> new Date(data.Date).getFullYear() == selectedyear);
       }
-      this.populateStockTable();
-      this.populateChart();
+      this.populateStockTable(this.stockData);
+      this.populateChart(this.stockData);
     });
     
   }
@@ -55,26 +56,112 @@ export class StockDetailsComponent implements OnInit {
   getStocksByRange()
   {
     this.stockData =  this.stockData.filter(data=> new Date(data.Date) >=  new Date(this.fromDate) && new Date(data.Date) <= new Date(this.toDate));
-    this.populateStockTable();
-    this.populateChart();    
+    this.populateStockTable(this.stockData);
+    this.populateChart(this.stockData);    
   }
 
-  populateStockTable()
+  populateStockTable(data:any)
   {
-    this.stockTable.populateStockTableData(this.stockData);
+    this.stockTable.populateStockTableData(data);
   }
 
-  populateChart()
+  populateChart(data:any)
   {
-    this.stockChart.populateChartData(this.stockData, this.selectedSymbol,this.chartSubcaption);
+    this.stockChart.populateChartData(data, this.selectedSymbol,this.chartSubcaption);
   }
   
   getLastOneMonthData()
   {
+    let latestDate =  new Date(Math.max.apply(null, this.stockData.map(function(e) {
+      return new Date(e.Date);
+    })));
+    let startDate = new Date((latestDate.getMonth()+1)+'/01'+"/"+latestDate.getFullYear());
     
-    this.stockData = this.stockData.filter(data=> new Date(data.Date).getFullYear() == 2016);
-    console.log( this.stockData);
+    let data =  this.stockData.filter(data=> new Date(data.Date) >= startDate && new Date(data.Date) <= latestDate);
+    this.populateStockTable(data);
+    this.populateChart(data);
+    
+  }
 
+  getLastThreeMonthData()
+  {
+    let latestDate =  new Date(Math.max.apply(null, this.stockData.map(function(e) {
+      return new Date(e.Date);
+    })));
+    let startDate = new Date((latestDate.getMonth()-1)+'/01'+"/"+latestDate.getFullYear());
+    
+    let data =  this.stockData.filter(data=> new Date(data.Date) >= startDate && new Date(data.Date) <= latestDate);
+    this.populateStockTable(data);
+    this.populateChart(data);
+    
+  }
+
+  getLastSixMonthData()
+  {
+    let latestDate =  new Date(Math.max.apply(null, this.stockData.map(function(e) {
+      return new Date(e.Date);
+    })));
+    let startDate = new Date((latestDate.getMonth()-5)+'/01'+"/"+latestDate.getFullYear());
+    
+    let data =  this.stockData.filter(data=> new Date(data.Date) >= startDate && new Date(data.Date) <= latestDate);
+    this.populateStockTable(data);
+    this.populateChart(data);
+    
+  }
+
+  getLastOneYearData()
+  {
+    let latestDate =  new Date(Math.max.apply(null, this.stockData.map(function(e) {
+      return new Date(e.Date);
+    })));
+    let year = +latestDate.getFullYear();
+    
+    let data =  this.stockData.filter(data=> new Date(data.Date).getFullYear() == year);
+    this.populateStockTable(data);
+    this.populateChart(data);
+    
+  }
+
+  getLastThreeYearData()
+  {
+    this.service.getStocks(this.selectedSymbol).subscribe(respose=>{
+      this.stockData =  respose.json();
+
+      let latestDate =  new Date(Math.max.apply(null, this.stockData.map(function(e) {
+        return new Date(e.Date);
+      })));
+      let year = +latestDate.getFullYear()-2;
+      
+      let data =  this.stockData.filter(data=> new Date(data.Date).getFullYear() >= year);
+      this.populateStockTable(data);
+      this.populateChart(data);
+    });
+  }
+
+  getLastFiveYearData()
+  {
+    this.service.getStocks(this.selectedSymbol).subscribe(respose=>{
+      this.stockData =  respose.json();
+
+      let latestDate =  new Date(Math.max.apply(null, this.stockData.map(function(e) {
+        return new Date(e.Date);
+      })));
+      let year = +latestDate.getFullYear()-4;
+      
+      let data =  this.stockData.filter(data=> new Date(data.Date).getFullYear() >= year);
+      this.populateStockTable(data);
+      this.populateChart(data);
+    });
+    
+  }
+
+  getAllData()
+  {
+    this.service.getStocks(this.selectedSymbol).subscribe(respose=>{
+      let data  =  respose.json();
+      this.populateStockTable(data);
+      this.populateChart(data);
+    });
   }
 
 }
