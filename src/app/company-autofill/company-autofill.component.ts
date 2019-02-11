@@ -16,17 +16,17 @@ export class CompanyAutofillComponent implements OnInit {
   companyList: Company[];
   myControl = new FormControl();
   filteredOptions: Observable<Company[]>;
-  
+
   @Output() change = new EventEmitter();
 
-  constructor(private service : CompanyService) { 
-    
+  constructor(private service : CompanyService) {
+
   }
 
   ngOnInit() {
-    this.service.getCompanies().subscribe(respose=>{
-      this.companyList = respose.json();
-      
+    this.service.getAll().subscribe(companies=>{
+      this.companyList = companies;
+
       this.filteredOptions = this.myControl.valueChanges
       .pipe(
         startWith<string | Company>(''),
@@ -40,7 +40,7 @@ export class CompanyAutofillComponent implements OnInit {
     /*this.selectedCompany = company ? company : undefined;
     return company ? company.Symbol : undefined;*/
     return null;
-    
+
   }
 
   private _filter(symbol: string): Company[] {

@@ -1,3 +1,5 @@
+import { AppErrorHandler } from './common/app-error-handler';
+import { ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {HttpModule} from '@angular/http';
@@ -5,14 +7,14 @@ import {RouterModule, Routes} from '@angular/router';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material';
 import { MatInputModule } from '@angular/material';
-import {MatSelectModule} from '@angular/material/select'
+import {MatSelectModule} from '@angular/material/select';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatTabsModule} from '@angular/material/tabs';
 import {CompanyAutofillComponent } from './company-autofill/company-autofill.component';
-import {MatTableModule,MatProgressSpinnerModule,MatPaginatorModule,MatToolbarModule} from '@angular/material'
+import {MatTableModule, MatProgressSpinnerModule, MatPaginatorModule, MatToolbarModule} from '@angular/material';
 import {HttpClientModule} from '@angular/common/http';
-import { DatePipe } from '@angular/common'
+import { DatePipe } from '@angular/common';
 
 // Import angular-fusioncharts
 import { FusionChartsModule } from 'angular-fusioncharts';
@@ -34,12 +36,13 @@ import { StockTableComponent } from './stock-table/stock-table.component';
 
 import { CompanyService } from './services/company.service';
 import { StockYearlyPerformanceTableComponent } from './stock-yearly-performance-table/stock-yearly-performance-table.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 
 
 
 // Pass the fusioncharts library and chart modules
-FusionChartsModule.fcRoot(FusionCharts, Charts, FusionTheme,powercharts);
+FusionChartsModule.fcRoot(FusionCharts, Charts, FusionTheme, powercharts);
 
 const appRoutes: Routes = [
   {
@@ -57,10 +60,14 @@ const appRoutes: Routes = [
   {
     path: 'stock/:symbol/:year',
     component: StockDetailsComponent
-  },  
+  },
   {
       path: 'stock',
       component: StockDetailsComponent
+  },
+  {
+      path: '**',
+      component: NotFoundComponent
   }
 ];
 
@@ -74,30 +81,31 @@ const appRoutes: Routes = [
     StockDetailsComponent,
     HomeComponent,
     StockChartComponent,
-    StockYearlyPerformanceTableComponent
+    StockYearlyPerformanceTableComponent,
+    NotFoundComponent
 
   ],
   imports: [
     BrowserModule
-    ,HttpModule
-    ,BrowserAnimationsModule
-    ,FormsModule
-    ,ReactiveFormsModule
-    ,MatAutocompleteModule
-    ,MatFormFieldModule
-    ,MatInputModule
-    ,MatSelectModule
-    ,MatTabsModule
-    ,MatTableModule
-    ,MatProgressSpinnerModule
-    ,MatPaginatorModule
-    ,HttpClientModule
-    ,MatToolbarModule
-    ,RouterModule.forRoot(appRoutes)
-    ,FusionChartsModule
+    , HttpModule
+    , BrowserAnimationsModule
+    , FormsModule
+    , ReactiveFormsModule
+    , MatAutocompleteModule
+    , MatFormFieldModule
+    , MatInputModule
+    , MatSelectModule
+    , MatTabsModule
+    , MatTableModule
+    , MatProgressSpinnerModule
+    , MatPaginatorModule
+    , HttpClientModule
+    , MatToolbarModule
+    , RouterModule.forRoot(appRoutes)
+    , FusionChartsModule
   ],
-  
-  providers: [CompanyService,DatePipe],
+
+  providers: [CompanyService, DatePipe, {provide: ErrorHandler, useClass: AppErrorHandler}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

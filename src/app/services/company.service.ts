@@ -1,18 +1,14 @@
+import { DataService } from './data.service';
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CompanyService {
+export class CompanyService  extends DataService {
 
-  private url = "http://local.stockarchiveapi.com/api/companies";
-  
-  constructor(private http: Http) {
+  constructor(http: Http) {
+    super('http://local.stockarchiveapi.com/api/companies',http)
   }
 
-  getCompanies(){
-    return  this.http.get(this.url);
-  }
-  
 }

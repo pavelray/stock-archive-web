@@ -6,7 +6,7 @@ import { Http } from '@angular/http';
 })
 export class StockService {
   private url = "http://local.stockarchiveapi.com/api/Stock/";
-  
+
   constructor(private http: Http) {
   }
 
@@ -29,5 +29,5 @@ export class StockService {
   getBestPerformingStock(year){
     return this.http.get(this.url+"GetBestPerformingCompany/"+year);
   }
-  
+
 }
